@@ -18,6 +18,22 @@ Meteor.methods({
         console.log('POST response:', res);
       }
     });
+  },
 
+  'putWidget'(doc){
+    let putWidgetsUrl = 'http://spa.tglrw.com:4000/widgets/' + doc.id;
+    const queryOptions = {
+      data : doc,
+      headers: {'Content-Type': 'application/json'}
+    };
+    HTTP.put(putWidgetsUrl, queryOptions, function(err, res){
+      if (err){
+        console.error(putWidgetsUrl, ": Returned statusCode:", err.statusCode, err);
+        throw new Meteor.error('Put error to:', putWidgetsUrl, err);
+      } else{
+        console.log('PUT SUCCESSFUL:');
+        console.log('PUT response:', res);
+      }
+    });
   }
 });

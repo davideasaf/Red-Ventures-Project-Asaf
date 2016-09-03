@@ -1,3 +1,4 @@
+import { Meteor } from 'meteor/meteor';
 import React, { Component, PropTypes } from 'react';
 import { createContainer } from 'meteor/react-meteor-data';
 
@@ -35,24 +36,28 @@ export default class EditWidgetModal extends Component {
     }
   };
 
-  handleSubmit(widgetToSubmit) {
+  handleSubmit(e) {
+    e.preventDefault();
+    let widgetToSubmit = this.props.displayData;
+    console.log('test');
     console.log('widgetToSubmit:', widgetToSubmit);
     console.log('this', this);
 
-    // let PutWidgetsUrl = 'http://spa.tglrw.com:4000/widgets/' + widgetToSubmit.id;
-    // let queryOptions = {
-    //   timeout: 10000
-    // };
-    // console.log('this inside HTTP call:',this);
-    // HTTP.get(PutWidgetsUrl, queryOptions, function(err, res){
-    //   if (err){
-    //     console.error(PutWidgetsUrl, ": Returned statusCode:", err.statusCode, err.toString());
-    //   } else{
-    //     console.log('this inside HTTP call:',this);
-    //     this.setState({widgetsData: res.data});
-    //   }
-    // }.bind(this));
+    Meteor.call('putWidget', widgetToSubmit, (err) => {
+      if (err){
+        console.error(err);
+      } else{
+        //call parent's data request function to render all widgets including the new one created
+        // this.props.onWidgetEdited();
+      }
+    });
   };
+
+  // Using property 'data-dismiss' on button destroys onSubmit callback.
+  // Using jquery to close modal
+  dismissModal(){
+    $('#myModal').modal('hide');
+  }
 
 
   render() {
@@ -67,7 +72,7 @@ export default class EditWidgetModal extends Component {
             <h4 className="modal-title">Edit Widget</h4>
           </div>
           <div className="modal-body">
-            <form id="widgetEditForm" className="form-horizontal" onSubmit={this.handleSubmit.bind(this, this.props.displayData)}>
+            <form id="widgetEditForm" className="form-horizontal" onSubmit={this.handleSubmit.bind(this)}>
 
               {/*/!*<!-- Name-->*!/*/}
               <div className="controls">
@@ -81,7 +86,6 @@ export default class EditWidgetModal extends Component {
                   ref="widgetName"
                   className="input-medium"/>
               </div>
-              {/*<ModalInputName name={this.props.displayData.name}/>*/}
 
               {/*<!-- Price -->*/}
               <div className="controls">
@@ -146,10 +150,15 @@ export default class EditWidgetModal extends Component {
                   onChange={this.handleChange.bind(this, 'widgetInventory')}
                 />
               </div>
+              {/*<button type="submit" className="btn btn-default" onClick={this.dismissModal.bind(this)}>Submit Edit</button>*/}
             </form>
           </div>
           <div className="modal-footer">
-            <button form="widgetEditForm" value="Submit" type="submit" className="btn btn-default" data-dismiss="modal">Submit Edit</button>
+            <button
+              form="widgetEditForm"
+              type="submit"
+              className="btn btn-default"
+              onClick={this.dismissModal.bind(this)}>Submit Edit</button>
           </div>
         </div>
 

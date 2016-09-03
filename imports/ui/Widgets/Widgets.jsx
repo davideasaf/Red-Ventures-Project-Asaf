@@ -43,12 +43,10 @@ export default class Widgets extends Component {
     let queryOptions = {
       timeout: 10000
     };
-    console.log('this inside HTTP call:',this);
     HTTP.get(getWidgetsUrl, queryOptions, function(err, res){
       if (err){
         console.error(getWidgetsUrl, ": Returned statusCode:", err.statusCode, err.toString());
       } else{
-        console.log('this inside HTTP call:',this);
         this.setState({widgetsData: res.data});
       }
     }.bind(this));
@@ -56,9 +54,6 @@ export default class Widgets extends Component {
 
   handleModalChange(inputChange) {
     console.log('inputChange:', inputChange);
-    // let tmpcurrentWidgetdata = this.state.currentWidgetData;
-    // tmpcurrentWidgetdata.name = inputChange;
-    // this.setState({currentWidgetData: tmpcurrentWidgetdata});
     this.setState({currentWidgetData: inputChange})
   }
 
@@ -74,6 +69,7 @@ export default class Widgets extends Component {
         <EditWidgetModal
           displayData={this.state.currentWidgetData}
           onWidgetInput={this.handleModalChange.bind(this)}
+          onWidgetEdited={this.loadWidgetsFromApi.bind(this)}
         />
         <Headerbar page="Widgets"/>
         <Sidebar page="Widgets"/>
@@ -83,7 +79,6 @@ export default class Widgets extends Component {
           displayData={this.state.widgetsData}
           onRowDataClick={this.handleWidgetClickTable.bind(this)}
         />
-        {/*<WidgetsTable widgetsData={this.state.widgetsData} onCreateWidgetSubmit={this.loadWidgetsFromApi.bind(this)}/>*/}
         {/*<CreateWidgetInput/>*/}
       </div>
     )
