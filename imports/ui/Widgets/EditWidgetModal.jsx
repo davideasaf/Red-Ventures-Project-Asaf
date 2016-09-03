@@ -39,18 +39,33 @@ export default class EditWidgetModal extends Component {
   handleSubmit(e) {
     e.preventDefault();
     let widgetToSubmit = this.props.displayData;
-    console.log('test');
     console.log('widgetToSubmit:', widgetToSubmit);
-    console.log('this', this);
 
-    Meteor.call('putWidget', widgetToSubmit, (err) => {
-      if (err){
-        console.error(err);
-      } else{
-        //call parent's data request function to render all widgets including the new one created
-        // this.props.onWidgetEdited();
-      }
-    });
+    if (widgetToSubmit && widgetToSubmit.id){
+      console.log('PUTTING...');
+      //PUT to update
+      Meteor.call('putWidget', widgetToSubmit, (err) => {
+        if (err){
+          console.error(err);
+        } else{
+          //call parent's data request function to render all widgets including the new one created
+          // this.props.onWidgetEdited();
+        }
+      });
+    }
+    else if (widgetToSubmit){
+      console.log('POSTING...');
+      //POST to update
+      Meteor.call('postWidget', widgetToSubmit, (err) => {
+        if (err){
+          console.error(err);
+        } else{
+          //call parent's data request function to render all widgets including the new one created
+          this.props.onWidgetEdited();
+        }
+      });
+    }
+
   };
 
   // Using property 'data-dismiss' on button destroys onSubmit callback.
@@ -133,6 +148,7 @@ export default class EditWidgetModal extends Component {
                   name="widget-properties"
                   id="widget-properties-0"
                   ref="widgetMelts"
+                  value={this.props.displayData.melts}
                   onChange={this.handleChange.bind(this, 'widgetMelts')}
                 />
               </div>
